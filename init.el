@@ -48,6 +48,9 @@
 ; yeet away the startup message so default-directory setting can work
 (setq inhibit-startup-message t)
 
+; open multiple files as a horizontal split by default
+(setq split-width-threshold 1)
+
 (autoload 'rust-mode "rust-mode" nil t)
 
 ;; store all backup and autosave files in a single dir so we dont polute our workspaces
