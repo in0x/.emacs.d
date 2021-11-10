@@ -54,8 +54,15 @@
 (autoload 'rust-mode "rust-mode" nil t)
 
 ;; store all backup and autosave files in a single dir so we dont polute our workspaces
-(setq backup-directory-alist `((".*" . ,"~/emacs_saves/")))
+; (setq backup-directory-alist `((".*" . ,"~/emacs_saves/")))
       
+;disable backup
+(setq backup-inhibited t)
+;disable auto save
+(setq auto-save-default nil)
+;disable lock file
+(setq create-lockfiles nil)
+
 ;;(setq auto-save-file-name-transforms
 ;;  `((".*" "~/emacs_saves/" t)))
 
