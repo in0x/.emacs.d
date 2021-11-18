@@ -96,6 +96,10 @@
 ; https://emacs.stackexchange.com/questions/66220/why-does-font-lock-mode-work-with-various-programming-languages-but-it-does-not
 (add-hook 'text-mode-hook (lambda () (setq font-lock-defaults '(nil))))
 
+; map dynamic abbrev to C-tab
+(global-set-key (kbd "C-<tab>") 'dabbrev-expand)
+(define-key minibuffer-local-map (kbd "C-<tab>") 'dabbrev-expand)
+
 ; Color todos in red so they stand out
 (setq fixme-modes '(c++-mode c-mode emacs-lisp-mode text-mode indented-text-mode))
 (make-face 'font-lock-fixme-face)
