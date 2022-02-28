@@ -146,6 +146,13 @@
   "explenation."
   (setq-local require-final-newline nil))  
 
+; Fix default indentation of curly braces in c++ mode
+; https://stackoverflow.com/questions/663588/emacs-c-mode-incorrect-indentation
+(defun my-c++-mode-hook ()
+  (setq c-basic-offset 4)
+  (c-set-offset 'substatement-open 0))
+(add-hook 'c++-mode-hook 'my-c++-mode-hook)
+  
 ; Delete words without using kill-ring, to preserve my sanity when ctrl-deleting to yank over
 ; http://ergoemacs.org/emacs/emacs_kill-ring.html
 (defun my-delete-word (arg)
