@@ -87,7 +87,8 @@
 (global-set-key "\C-xp" 'full-path-to-clipboard)
     
 ; load our themes
-(load-theme 'naysayer t)
+; (load-theme 'naysayer t)
+(load-theme 'solarized-selenized-dark t)
 
 ; set the global default font
 (if (not (equal system-type 'darwin))
@@ -124,10 +125,11 @@
 ; Set up some reasonable file extension to mode mappings
 (setq auto-mode-alist
       (append
-       '(("\\.cpp$"    . c++-mode)
-         ("\\.inl$"    . c++-mode)
+       '(("\\.cpp$"  . c++-mode)
+         ("\\.mm"    . objc-mode)
+         ("\\.inl$"  . c++-mode)
          ("\\.h$"    . c++-mode)
-         ("\\.c$"   . c++-mode)
+         ("\\.c$"    . c++-mode)
          ("\\.cc$"   . c++-mode)
          ("\\.txt$" . indented-text-mode)
          ("\\.emacs$" . emacs-lisp-mode)
