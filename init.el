@@ -90,7 +90,8 @@
 (load-theme 'naysayer t)
 
 ; set the global default font
-(set-face-attribute 'default nil :font "Consolas" )
+(if (not (equal system-type 'darwin))
+    set-face-attribute 'default nil :font "Consolas" )
 
 ; Set font-lock-defaults for text-mode, otherwise fixme-mode doesnt correctly apply to text-mode
 ; https://emacs.stackexchange.com/questions/66220/why-does-font-lock-mode-work-with-various-programming-languages-but-it-does-not
