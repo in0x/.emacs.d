@@ -200,3 +200,7 @@ This command does not push text to `kill-ring'."
 (global-set-key (kbd "C-k") 'my-delete-line)
 (global-set-key (kbd "M-d") 'my-delete-word)
 (global-set-key (kbd "<C-backspace>") 'my-backward-delete-word)
+
+; unbind right option on mac so we can use it to modify character
+(when (eq system-type 'darwin)
+  (setq mac-right-option-modifier 'none))
