@@ -1,28 +1,12 @@
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages '(##)))
- 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; Visual tweaks
+(setq inhibit-startup-message t)
 
-; Make themes path available for loading
-(add-to-list 'load-path "~/.emacs.d/pconfig")
-(add-to-list 'custom-theme-load-path "~/.emacs.d/pconfig")
-
-; Load up machine local settings
-(load-file "~/.emacs.d/pconfig/machine-local.el")
- 
- ; Turn tool and scroll bar
-(menu-bar-mode -1)
+(scroll-bar-mode -1)
 (tool-bar-mode -1)
-(toggle-scroll-bar 0)
+(set-fringe-mode 10) ; width of bars on the left and right
+(menu-bar-mode -1)
+(set-face-attribute 'default nil :height 130) ; font size
+(global-display-line-numbers-mode) ; Turn on line number bar
 
 ; Maximize on launch
 (defun maximize-frame ()
@@ -34,38 +18,15 @@
     (w32-send-sys-command 61488)))
 (add-hook 'window-setup-hook 'maximize-frame t)
 
-; Everything integration for windows cause we got crappy commandline tools
-(require 'everything)
+(setq backup-inhibited t) ; disable backup
+(setq auto-save-default nil) ; disable auto save
+(setq create-lockfiles nil) ; disable lock file
+(setq ring-bell-function 'ignore) ; disable bell sound
 
-; Turn on line number bar
-(global-display-line-numbers-mode)
-
-; set up rainbow parens and highlighting matching parens
-(load "rainbow-delimiters")
-(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
-(show-paren-mode 1)
-
-; yeet away the startup message so default-directory setting can work
-(setq inhibit-startup-message t)
-
-; open multiple files as a horizontal split by default
+;; open multiple files as a horizontal split by default
 (setq split-width-threshold 1)
 
-(autoload 'rust-mode "rust-mode" nil t)
-
-;; store all backup and autosave files in a single dir so we dont polute our workspaces
-; (setq backup-directory-alist `((".*" . ,"~/emacs_saves/")))
-      
-;disable backup
-(setq backup-inhibited t)
-;disable auto save
-(setq auto-save-default nil)
-;disable lock file
-(setq create-lockfiles nil)
-
-;;(setq auto-save-file-name-transforms
-;;  `((".*" "~/emacs_saves/" t)))
-
+;; cx-p: copy path to shortcut method, useful when I have something open in emacs but want to open it in another program 
 (defun to-clipboard (x)
     "Copy the given argument to the clipboard"
     (when x
@@ -85,44 +46,12 @@
     (to-clipboard (buffer-file-name)))  
     
 (global-set-key "\C-xp" 'full-path-to-clipboard)
-    
-; load our themes
-; (load-theme 'naysayer t)
-(load-theme 'solarized-selenized-dark t)
 
-; set the global default font
-(if (not (equal system-type 'darwin))
-    set-face-attribute 'default nil :font "Consolas" )
+;; unbind right option on mac so we can use it to modify character
+(when (eq system-type 'darwin)
+  (setq mac-right-option-modifier 'none))
 
-; Set font-lock-defaults for text-mode, otherwise fixme-mode doesnt correctly apply to text-mode
-; https://emacs.stackexchange.com/questions/66220/why-does-font-lock-mode-work-with-various-programming-languages-but-it-does-not
-(add-hook 'text-mode-hook (lambda () (setq font-lock-defaults '(nil))))
-
-; map dynamic abbrev to C-tab
-(global-set-key (kbd "C-<tab>") 'dabbrev-expand)
-(define-key minibuffer-local-map (kbd "C-<tab>") 'dabbrev-expand)
-
-; Color todos in red so they stand out
-(setq fixme-modes '(c++-mode c-mode emacs-lisp-mode text-mode indented-text-mode))
-(make-face 'font-lock-fixme-face)
-(make-face 'font-lock-note-face)
-(make-face 'font-lock-date-face)
-(make-face 'font-lock-done-face)
-(mapc (lambda (mode)
-   (font-lock-add-keywords
-    mode
-    '(("\\<\\(TODO\\|todo\\|ToDo\\||to-do\\|To-Do\\)" 1 'font-lock-fixme-face t)
-      ("\\<\\(NOTE\\|Note\\|note\\)" 1 'font-lock-note-face t)
-      ("\\<\\(DATE\\)" 1 'font-lock-date-face t)
-      ("\\<\\(DONE\\)" 1 'font-lock-done-face t)
-      )))
-    fixme-modes)
-(modify-face 'font-lock-fixme-face "red" nil nil t nil t nil nil)
-(modify-face 'font-lock-note-face "yellow" nil nil t nil t nil nil)
-(modify-face 'font-lock-done-face "light green" nil nil t nil t nil nil)
-(modify-face 'font-lock-date-face "pink" nil nil t nil t nil nil)
- 
-; Set up some reasonable file extension to mode mappings
+;; Set up some reasonable file extension to mode mappings
 (setq auto-mode-alist
       (append
        '(("\\.cpp$"  . c++-mode)
@@ -136,28 +65,28 @@
          ("\\.rs$" . rust-mode)
          ) auto-mode-alist))
          
-; Use 4 spaces for indentation
+;; Use 4 spaces for indentation
 (setq-default indent-tabs-mode nil)
 (setq c-basic-offset 4)
 (setq-default tab-width 4)
 
-; Disable inserting a newline EOF, otherwise pollutes all files opened in emacs for the first time.
-; https://www.reddit.com/r/emacs/comments/ap78wi/remove_newline_at_end_of_file_in_specific/
-; TODO: learn how to apply this to all our auto modes
+;; Disable inserting a newline EOF, otherwise pollutes all files opened in emacs for the first time.
+;; https://www.reddit.com/r/emacs/comments/ap78wi/remove_newline_at_end_of_file_in_specific/
+;; TODO: learn how to apply this to all our auto modes
 (add-hook 'c++-mode-hook 'cpp-nl-hook)
 (defun cpp-nl-hook ()
   "explenation."
   (setq-local require-final-newline nil))  
 
-; Fix default indentation of curly braces in c++ mode
-; https://stackoverflow.com/questions/663588/emacs-c-mode-incorrect-indentation
+;; Fix default indentation of curly braces in c++ mode
+;; https://stackoverflow.com/questions/663588/emacs-c-mode-incorrect-indentation
 (defun my-c++-mode-hook ()
   (setq c-basic-offset 4)
   (c-set-offset 'substatement-open 0))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
   
-; Delete words without using kill-ring, to preserve my sanity when ctrl-deleting to yank over
-; http://ergoemacs.org/emacs/emacs_kill-ring.html
+;; Delete words without using kill-ring, to preserve my sanity when ctrl-deleting to yank over
+;; http://ergoemacs.org/emacs/emacs_kill-ring.html
 (defun my-delete-word (arg)
   "Delete characters forward until encountering the end of a word.
 With argument, do this that many times.
@@ -201,6 +130,79 @@ This command does not push text to `kill-ring'."
 (global-set-key (kbd "M-d") 'my-delete-word)
 (global-set-key (kbd "<C-backspace>") 'my-backward-delete-word)
 
-; unbind right option on mac so we can use it to modify character
-(when (eq system-type 'darwin)
-  (setq mac-right-option-modifier 'none))
+;; configure package management
+(require 'package)
+
+;; package sources
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			 ("org" . "https://orgmode.org/elpa/")
+			 ("elpa" . "https://elpa.gnu.org/packages/")))
+
+;; initialize package managment and load packages sources if necessary
+(package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
+
+;; install use-package if we dont have it
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+
+(require 'use-package)
+(setq use-package-always-ensure t) ; make use package download packages if we dont have 
+
+(use-package ivy
+  :diminish
+  :bind (("C-s" . swiper))
+  :config
+  (ivy-mode 1))
+
+(use-package counsel
+  :custom (counsel-alias-expand t))
+
+;; the below song and dance is needed for counsel to show me aliases
+(setq ivy-use-virtual-buffers t)
+(setq enable-recursive-minibuffers t)
+(setq counsel-alias-expand t)
+(global-set-key "\M-x" 'counsel-M-x)
+(ivy-configure 'counsel-M-x
+  :initial-input ""
+  :display-transformer-fn #'counsel-M-x-transformer)
+
+;; helper to check if a font is installed so we can run all-the-fonts install only once
+(defun font-installed-p (font-name)
+  "Check if font with FONT-NAME is available."
+  (if (find-font (font-spec :name font-name))
+      t
+    nil))
+
+(use-package all-the-icons
+  :config
+  (when (and (not (font-installed-p "all-the-icons"))
+             (window-system))
+    (all-the-icons-install-fonts t)))
+
+(use-package doom-modeline
+  :init (doom-modeline-mode 1)
+  :custom ((doom-modeline-height 10)
+           (doom-modeline-buffer-modification-icon nil)))
+
+;; override how font height is calculated so we can make the modeline less thicc
+;; https://github.com/seagle0128/doom-modeline/issues/187
+(defun my-doom-modeline--font-height ()
+  "Calculate the actual char height of the mode-line."
+  (+ (frame-char-height) 5))
+(advice-add #'doom-modeline--font-height :override #'my-doom-modeline--font-height)
+
+(use-package doom-themes
+  :ensure t
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-dark+ t)
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))

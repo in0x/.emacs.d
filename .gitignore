@@ -1,2 +1,4 @@
 pconfig/machine-local.el
 auto-save-list
+elpa/
+*.DS_Store
