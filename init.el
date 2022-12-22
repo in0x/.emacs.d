@@ -7,6 +7,14 @@
 (menu-bar-mode -1)
 (set-face-attribute 'default nil :height 130) ; font size
 (global-display-line-numbers-mode) ; Turn on line number bar
+(setq-default show-trailing-whitespace t); highlight trailing whitespace https://stackoverflow.com/questions/34531831/highlighting-trailing-whitespace-in-emacs-without-changing-character
+(dolist (hook '(special-mode-hook ; but not in these modes.
+                     term-mode-hook
+                     comint-mode-hook
+                     compilation-mode-hook
+                     minibuffer-setup-hook))
+       (add-hook hook
+                 (lambda () (setq show-trailing-whitespace nil))))
 
 ; Maximize on launch
 (defun maximize-frame ()
@@ -26,7 +34,7 @@
 ;; open multiple files as a horizontal split by default
 (setq split-width-threshold 1)
 
-;; cx-p: copy path to shortcut method, useful when I have something open in emacs but want to open it in another program 
+;; cx-p: copy path to shortcut method, useful when I have something open in emacs but want to open it in another program
 (defun to-clipboard (x)
     "Copy the given argument to the clipboard"
     (when x
@@ -34,17 +42,17 @@
             (insert x)
             (clipboard-kill-region (point-min) (point-max)))
          (message x)))
-     
+
 (defun show-file-path ()
   "Show the full file path in the minibuffer."
   (interactive)
-  (message (buffer-file-name)))    
+  (message (buffer-file-name)))
 
 (defun full-path-to-clipboard ()
     "Copy the absolute path of the currently open file to the clipboard."
     (interactive)
-    (to-clipboard (buffer-file-name)))  
-    
+    (to-clipboard (buffer-file-name)))
+
 (global-set-key "\C-xp" 'full-path-to-clipboard)
 
 ;; unbind right option on mac so we can use it to modify character
@@ -64,7 +72,7 @@
          ("\\.emacs$" . emacs-lisp-mode)
          ("\\.rs$" . rust-mode)
          ) auto-mode-alist))
-         
+
 ;; Use 4 spaces for indentation
 (setq-default indent-tabs-mode nil)
 (setq c-basic-offset 4)
@@ -76,7 +84,7 @@
 (add-hook 'c++-mode-hook 'cpp-nl-hook)
 (defun cpp-nl-hook ()
   "explenation."
-  (setq-local require-final-newline nil))  
+  (setq-local require-final-newline nil))
 
 ;; Fix default indentation of curly braces in c++ mode
 ;; https://stackoverflow.com/questions/663588/emacs-c-mode-incorrect-indentation
@@ -84,7 +92,7 @@
   (setq c-basic-offset 4)
   (c-set-offset 'substatement-open 0))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
-  
+
 ;; Delete words without using kill-ring, to preserve my sanity when ctrl-deleting to yank over
 ;; http://ergoemacs.org/emacs/emacs_kill-ring.html
 (defun my-delete-word (arg)
@@ -135,8 +143,8 @@ This command does not push text to `kill-ring'."
 
 ;; package sources
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			 ("org" . "https://orgmode.org/elpa/")
-			 ("elpa" . "https://elpa.gnu.org/packages/")))
+             ("org" . "https://orgmode.org/elpa/")
+             ("elpa" . "https://elpa.gnu.org/packages/")))
 
 ;; initialize package managment and load packages sources if necessary
 (package-initialize)
@@ -148,7 +156,7 @@ This command does not push text to `kill-ring'."
   (package-install 'use-package))
 
 (require 'use-package)
-(setq use-package-always-ensure t) ; make use package download packages if we dont have 
+(setq use-package-always-ensure t) ; make use package download packages if we dont have
 
 (use-package ivy
   :diminish
@@ -159,14 +167,8 @@ This command does not push text to `kill-ring'."
 (use-package counsel
   :custom (counsel-alias-expand t))
 
-;; the below song and dance is needed for counsel to show me aliases
-(setq ivy-use-virtual-buffers t)
-(setq enable-recursive-minibuffers t)
-(setq counsel-alias-expand t)
-(global-set-key "\M-x" 'counsel-M-x)
-(ivy-configure 'counsel-M-x
-  :initial-input ""
-  :display-transformer-fn #'counsel-M-x-transformer)
+(setq ivy-use-virtual-buffers t) ; shows useful extra stuff in switch-buffer
+(setq ivy-on-del-error-function 'ignore) ; dont fall out of completion when buffer is empty, so we dont accidentally delete stuff
 
 ;; helper to check if a font is installed so we can run all-the-fonts install only once
 (defun font-installed-p (font-name)
