@@ -232,3 +232,8 @@ This command does not push text to `kill-ring'."
 (use-package ccls
   :hook ((c-mode c++-mode objc-mode cuda-mode) .
          (lambda () (require 'ccls) (lsp))))
+
+(use-package lsp-treemacs
+  ;; :commands lsp-treemacs-errors-list
+  )
+
