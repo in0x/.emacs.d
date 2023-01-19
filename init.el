@@ -149,7 +149,7 @@ This command does not push text to `kill-ring'."
 ;; initialize package managment and load packages sources if necessary
 (package-initialize)
 (unless package-archive-contents
-  (package-refresh-contents))
+ (package-refresh-contents))
 
 ;; install use-package if we dont have it
 (unless (package-installed-p 'use-package)
@@ -229,11 +229,17 @@ This command does not push text to `kill-ring'."
   :ensure t
   :commands lsp-ivy-workspace-symbol)
 
-(use-package ccls
-  :hook ((c-mode c++-mode objc-mode cuda-mode) .
-         (lambda () (require 'ccls) (lsp))))
+;; (use-package ccls
+;;  :hook ((c-mode c++-mode objc-mode cuda-mode) .
+;;         (lambda () (require 'ccls) (lsp))))
 
 (use-package lsp-treemacs
-  ;; :commands lsp-treemacs-errors-list
-  )
+ ;; :commands lsp-treemacs-errors-list
+ )
 
+(use-package org-superstar)
+(add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
+
+(use-package rust-mode)
+
+(use-package magit)

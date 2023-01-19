@@ -4,3 +4,5 @@ elpa/
 *.DS_Store
 recentf
 .lsp-session-v*
+transient/
+.cache/
